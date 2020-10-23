@@ -16,6 +16,7 @@ Available variables are listed below, along with default values (see `defaults/m
 
 The `td-agent` Fluentd package state; set to `latest` to upgrade or change versions.
 
+    fluentd_adm_group: false
     fluentd_service_name: td-agent
     fluentd_service_state: started
     fluentd_service_enabled: true
