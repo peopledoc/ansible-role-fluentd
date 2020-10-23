@@ -10,6 +10,15 @@
     name: td-agent
     state: "{{ fluentd_package_state }}"
 
+- name: Add user to adm group
+  user:
+    name: td-agent
+    group: td-agent
+    state: present
+    groups: 'adm'
+    append: true
+  when: fluentd_adm_group == true 
+
 - name: Configure Fluentd.
   template:
     src: td-agent.conf.j2
