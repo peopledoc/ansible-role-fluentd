@@ -1,5 +1,7 @@
 ---
-fluentd_adm_group: false
+fluentd_groups:
+  - adm
+
 fluentd_package_state: present
 
 fluentd_service_name: td-agent

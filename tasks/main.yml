@@ -10,14 +10,14 @@
     name: td-agent
     state: "{{ fluentd_package_state }}"
 
-- name: Add user to adm group
+- name: "Add user to {{ fluentd_groups | join(',') }} group"
   user:
     name: td-agent
     group: td-agent
     state: present
-    groups: 'adm'
+    groups: '{{ fluentd_groups | join(",") }}'
     append: true
-  when: fluentd_adm_group == true 
+  when: fluentd_groups is defined
 
 - name: Configure Fluentd.
   template:
@@ -37,8 +37,54 @@
     user_install: false
   with_items: "{{ fluentd_plugins }}"
 
+- name: retrieve initial ExecStart
+  shell: 'grep -i "ExecStart=.*/.*" /lib/systemd/system/multi-user.target.wants/td-agent.service | sed -r "s/^([^\/])*(\/.*)/\2/"'
+  register: initial_cmd
+  tags:
+  - never
+  - aggregator
+
+- name: Ensure unit directory is present
+  file:
+    path: /etc/systemd/system/td-agent.service.d
+    state: directory
+    mode: '0755'
+  tags:
+  - never
+  - aggregator
+
+- name: Ensure override file is absent
+  file:
+    path: /etc/systemd/system/td-agent.service.d/override.conf
+    state: absent
+  tags:
+  - never
+  - aggregator
+
+- name: reset ExecStart to null
+  blockinfile:
+    path: /etc/systemd/system/td-agent.service.d/override.conf
+    create: yes
+    block: |
+      [Service]
+      ExecStart=
+  tags:
+  - never
+  - aggregator
+
+- name: Add vault secret to ExecStart
+  lineinfile:
+    path: /etc/systemd/system/td-agent.service.d/override.conf
+    state: present
+    insertafter: '^ExecStart=$'
+    line: 'ExecStart=vault --config-file {{ fluentd_vault_config_path }} env -p {{ fluentd_secret_path }}{{ fluent_secret_name }} -- {{ initial_cmd.stdout }}'
+  tags:
+  - never
+  - aggregator
+
 - name: Start Fluentd.
-  service:
+  systemd:
+    daemon_reload: yes
     name: "{{ fluentd_service_name }}"
     state: "{{ fluentd_service_state }}"
     enabled: "{{ fluentd_service_enabled }}"
