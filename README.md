@@ -14,11 +14,20 @@ Available variables are listed below, along with default values (see `defaults/m
 
     fluentd_package_state: present
 
+Extra groups to give specific accesses to fluentd user, like logs or secret:
+    fluentd_extra_groups:
+    - adm
+
 The `td-agent` Fluentd package state; set to `latest` to upgrade or change versions.
 
     fluentd_service_name: td-agent
     fluentd_service_state: started
     fluentd_service_enabled: true
+
+Vault integration to use alongside `aggregator` tag to load secret in environment variable:
+    fluentd_vault_config_path:
+    fluentd_secret_path:
+    fluentd_secret_name:
 
 Controls the Fluentd service options.
 
