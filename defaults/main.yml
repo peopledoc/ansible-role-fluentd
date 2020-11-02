@@ -1,5 +1,5 @@
 ---
-fluentd_groups:
+fluentd_extra_groups:
   - adm
 
 fluentd_package_state: present
