@@ -14,7 +14,7 @@ Available variables are listed below, along with default values (see `defaults/m
 
     fluentd_package_state: present
 
-Extra groups to add log access, secret:
+Extra groups to give specific accesses to fluentd user, like logs or secret:
     fluentd_extra_groups:
     - adm
 
