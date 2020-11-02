@@ -15,12 +15,11 @@ Available variables are listed below, along with default values (see `defaults/m
     fluentd_package_state: present
 
 Extra groups to add log access, secret:
-    fluentd_groups:
+    fluentd_extra_groups:
     - adm
 
 The `td-agent` Fluentd package state; set to `latest` to upgrade or change versions.
 
-    fluentd_adm_group: false
     fluentd_service_name: td-agent
     fluentd_service_state: started
     fluentd_service_enabled: true

@@ -15,7 +15,7 @@
     name: td-agent
     group: td-agent
     state: present
-    groups: '{{ fluentd_groups | join(",") }}'
+    groups: '{{ fluentd_extra_groups | join(",") }}'
     append: true
   when: fluentd_groups is defined
 
