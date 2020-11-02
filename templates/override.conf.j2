@@ -1,0 +1,4 @@
+#Template managed by Ansible
+[Service]
+ExecStart=
+ExecStart=vault --config-file {{ fluentd_vault_config_path }} env -p {{ fluentd_secret_path }}{{ fluent_secret_name }} -- {{ initial_cmd.stdout }}
