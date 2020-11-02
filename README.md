@@ -28,7 +28,7 @@ The `td-agent` Fluentd package state; set to `latest` to upgrade or change versi
 Vault integration to use alongside `aggregator` tag to load secret in environment variable:
     fluentd_vault_config_path:
     fluentd_secret_path:
-    fluent_secret_name:
+    fluentd_secret_name:
 
 Controls the Fluentd service options.
 
