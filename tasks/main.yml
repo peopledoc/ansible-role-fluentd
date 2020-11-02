@@ -53,33 +53,10 @@
   - never
   - aggregator
 
-- name: Ensure override file is absent
-  file:
-    path: /etc/systemd/system/td-agent.service.d/override.conf
-    state: absent
-  tags:
-  - never
-  - aggregator
-
-- name: reset ExecStart to null
-  blockinfile:
-    path: /etc/systemd/system/td-agent.service.d/override.conf
-    create: yes
-    block: |
-      [Service]
-      ExecStart=
-  tags:
-  - never
-  - aggregator
-
-- name: Add vault secret to ExecStart
-  lineinfile:
-    path: /etc/systemd/system/td-agent.service.d/override.conf
-    state: present
-    insertafter: '^ExecStart=$'
-    line: > 
-    'ExecStart=vault --config-file {{ fluentd_vault_config_path }}
-    env -p {{ fluentd_secret_path }}{{ fluent_secret_name }} -- {{ initial_cmd.stdout }}'
+- name: Add unit override.conf file
+  template:
+    src: templates/override.conf.j2
+    dest: /etc/systemd/system/td-agent.service.d/override.conf
   tags:
   - never
   - aggregator
