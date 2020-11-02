@@ -38,7 +38,7 @@
   with_items: "{{ fluentd_plugins }}"
 
 - name: retrieve initial ExecStart
-  shell: 'grep -i "ExecStart=.*/.*" /lib/systemd/system/multi-user.target.wants/td-agent.service | sed -r "s/^([^\/])*(\/.*)/\2/"'
+  shell: 'grep -i "ExecStart=.*/.*" /lib/systemd/system/td-agent.service | sed -r "s/^([^\/])*(\/.*)/\2/"'
   register: initial_cmd
   tags:
   - never
