@@ -1,14 +1,20 @@
 ---
 - include_tasks: setup-RedHat.yml
   when: ansible_os_family == 'RedHat'
+  tags:
+  - aggregator
 
 - include_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'
+  tags:
+  - aggregator
 
 - name: Install td-agent.
   package:
     name: td-agent
     state: "{{ fluentd_package_state }}"
+  tags:
+  - aggregator
 
 - name: "Add user to {{ fluentd_groups | join(',') }} group"
   user:
@@ -17,16 +23,20 @@
     state: present
     groups: '{{ fluentd_extra_groups | join(",") }}'
     append: true
-  when: fluentd_groups is defined
+  when: fluentd_extra_groups is defined
+  tags:
+  - aggregator
 
 - name: Configure Fluentd.
   template:
     src: td-agent.conf.j2
     dest: /etc/td-agent/td-agent.conf
-    owner: root
-    group: root
-    mode: 0644
+    owner: td-agent 
+    group: td-agent
+    mode: 0640
   notify: restart fluentd
+  tags:
+  - aggregator
 
 - name: Ensure Fluentd plugins are installed.
   gem:
@@ -36,34 +46,13 @@
     version: "{{ item.version | default(omit) }}"
     user_install: false
   with_items: "{{ fluentd_plugins }}"
-
-- name: retrieve initial ExecStart
-  shell: 'grep -i "ExecStart=.*/.*" /lib/systemd/system/td-agent.service | sed -r "s/^([^\/])*(\/.*)/\2/"'
-  register: initial_cmd
   tags:
-  - never
-  - aggregator
-
-- name: Ensure unit directory is present
-  file:
-    path: /etc/systemd/system/td-agent.service.d
-    state: directory
-    mode: '0755'
-  tags:
-  - never
-  - aggregator
-
-- name: Add unit override.conf file
-  template:
-    src: templates/override.conf.j2
-    dest: /etc/systemd/system/td-agent.service.d/override.conf
-  tags:
-  - never
   - aggregator
 
 - name: Start Fluentd.
   systemd:
-    daemon_reload: yes
     name: "{{ fluentd_service_name }}"
     state: "{{ fluentd_service_state }}"
     enabled: "{{ fluentd_service_enabled }}"
+  tags:
+  - aggregator

@@ -3,9 +3,13 @@
   rpm_key:
     key: https://packages.treasuredata.com/GPG-KEY-td-agent
     state: present
+  tags:
+  - aggregator
 
 - name: Add td-agent repository.
   template:
     src: td.repo.j2
     dest: /etc/yum.repos.d/td.repo
     mode: 0644
+  tags:
+  - aggregator

@@ -5,17 +5,23 @@
       - apt-transport-https
       - gnupg2
     state: present
+  tags:
+  - aggregator
 
 - name: Add td-agent apt key.
   apt_key:
     url: https://packages.treasuredata.com/GPG-KEY-td-agent
     state: present
+  tags:
+  - aggregator
 
 - name: Add td-agent repository.
   apt_repository:
     repo: >-
       deb
-      http://packages.treasuredata.com/3/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}/
+      http://packages.treasuredata.com/4/{{ ansible_distribution | lower }}/{{ ansible_distribution_release }}/
       {{ ansible_distribution_release }} contrib
     state: present
     update_cache: true
+  tags:
+  - aggregator
